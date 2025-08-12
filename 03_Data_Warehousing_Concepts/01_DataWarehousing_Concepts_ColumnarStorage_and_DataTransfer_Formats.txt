@@ -1,0 +1,60 @@
+Detailed Notes on Data Warehousing Concepts: Columnar Storage & Data Transfer Formats
+1. Data Warehousing & OLAP
+Data Warehousing is the process of collecting, storing, and managing large volumes of data from multiple sources for analysis and reporting.
+OLAP (Online Analytical Processing) is a category of software tools that allows users to interactively analyze multidimensional data.
+Warehouses are optimized for analytical queries, not transactional operations.
+OLAP systems prioritize read performance over write performance.
+Common data warehouse platforms: Snowflake, Amazon Redshift, Google BigQuery, Azure Synapse.
+
+2. Columnar Storage
+In columnar storage, data is stored column-by-column instead of row-by-row.
+Why columnar?
+Analytical queries often require scanning a few columns from a large dataset.
+Storing data in columns enables better compression because values in a column tend to be similar.
+I/O efficiency: only the required columns are read from disk.
+Example formats: Parquet, ORC, Avro.
+Parquet:
+Open-source, columnar storage file format.
+Efficient for analytical queries.
+Supports schema evolution, compression, and efficient encoding.
+
+3. Snowflake → BI Tools Data Transfer
+Snowflake stores data in columnar format internally.
+Power BI and Tableau also store imported datasets in columnar format internally for analysis.
+The problem: When transferring data between Snowflake and BI tools, the data is often sent in row-oriented format (row-by-row).
+Reason: The JDBC/ODBC connectors historically used for data transfer were built for transactional databases (OLTP), which store data in rows.
+This row-based transfer means the columnar storage benefit is lost during transport.
+Data has to be serialized into rows before sending, then deserialized into columns in the BI tool — adding overhead.
+
+4. Why JDBC/ODBC Transfers are Row-Based
+JDBC (Java Database Connectivity) and ODBC (Open Database Connectivity) were designed decades ago when most databases were row-oriented relational databases.
+These connectors fetch one row at a time or in small batches of rows.
+Columnar-aware transfer was not considered during their original design.
+This is why even if both systems use columnar storage, the transport layer defaults to row format.
+
+5. The Ideal Approach: Column-to-Column Transfer
+The most efficient transfer between two columnar systems would be column-to-column:
+No conversion to row format.
+Avoids unnecessary serialization/deserialization.
+Preserves compression and minimizes data movement.
+But with JDBC/ODBC, this direct column transfer isn’t possible due to legacy protocol limitations.
+
+6. ADBC as the Solution
+ADBC (Arrow Database Connectivity) is a newer standard designed to overcome these limitations.
+Based on Apache Arrow, which is an in-memory columnar data format.
+Supports zero-copy data transfers — data doesn’t need to be re-encoded during transport.
+Enables direct columnar transfers between databases and tools.
+
+Benefits:
+Lower latency.
+Less CPU overhead.
+No unnecessary format conversions.
+
+7. Best Practice When Connecting Tools
+Whenever integrating a new BI tool, analytics platform, or data processing framework with your warehouse:
+Check if ADBC is supported.
+If not, understand that JDBC/ODBC may cause row-based transfer and performance penalties.
+Prioritize tools and connectors that support columnar-aware transfer for large analytical workloads.
+
+✅ Key Takeaway:
+Even if your data warehouse and BI tool both use columnar storage, the connector protocol decides the transfer format. JDBC/ODBC forces row-based transfer, while ADBC enables true column-to-column efficiency.
