@@ -1,0 +1,50 @@
+1. What is a Star Schema? ⭐
+A data modeling design for data warehouses.
+Structure:
+    Central fact table (numeric measures + foreign keys).
+    Surrounding dimension tables (descriptive attributes).
+    Looks like a star 🌟 because facts are in the center and dimensions radiate out.
+
+2. Why It’s Important
+    a) Performance 🚀
+        Fewer joins compared to snowflake schema — dimensions are denormalized, so queries run faster.
+        Optimized for read-heavy analytics, not write-heavy transactional operations.
+    b) Simplicity 🛠️
+        Easy for analysts to understand:
+        Fact → Dimensions relationship is straightforward.
+        Business users can map metrics (facts) to business context (dimensions) easily.
+    c) Reduces Duplication 📉
+        Without star schema, you might store descriptive info inside the fact table → repeated for every transaction.
+        With star schema:
+        Store product info once in DimProduct.
+        Fact table just keeps the product_key reference.
+        
+        Example:
+        Without dimensions:
+            date, product_name, category, sales
+            2025-08-12, iPhone 15, Electronics, 1000
+            2025-08-13, iPhone 15, Electronics, 800
+              → "iPhone 15" and "Electronics" repeated many times.
+        With star schema:
+            FactSales:
+                date_key, product_key, sales
+                20250812, 101, 1000
+                20250813, 101, 800
+            DimProduct:
+              product_key, product_name, category
+              101, iPhone 15, Electronics
+                → Product details stored once, saving storage and avoiding inconsistencies.
+        
+        d) Easier Maintenance 🔧
+        If a product category name changes, you update it in one place (DimProduct), and all queries reflect the change.
+
+3. Visual Example
+
+             DimDate
+               |
+DimStore — FactSales — DimProduct
+               |
+           DimCustomer
+
+    Central FactSales table → numeric metrics.
+    Dimensions provide descriptive context.
