@@ -1,0 +1,71 @@
+Why we keep separate fact tables (like Sales and Budget) instead of merging
+How to handle complexity when our data model has many fact tables and dimensions
+
+
+
+1. Why Separate Fact Tables?
+It all boils down to granularity and data integrity.
+Example
+Sales Fact Table (granularity = product × store × day)
+    DateKey | ProductKey | StoreKey | SalesAmount | Discount
+    --------------------------------------------------------
+    20250101 | 101        | 201      | 1000        | 50
+    20250101 | 102        | 201      | 2000        | 0
+Budget Fact Table (granularity = category × region × month)
+    MonthKey | CategoryKey | RegionKey | BudgetAmount
+    -------------------------------------------------
+    202501   | 10          | 301       | 50000
+    202501   | 11          | 301       | 60000
+If you try to merge them into one fact table:
+The granularity mismatch causes duplicates or NULLs
+You’d repeat budget values for every product in that category, which wastes storage and distorts aggregations
+Best practice: Keep them separate, then join in queries only when necessary, using conformed dimensions like Date, Category, Region.
+
+
+2. Tackling Complexity in Models with Many Facts and Dimensions
+Model Level Strategies (Long-Term Maintainability)
+    Use a Bus Matrix
+    A table that maps each fact table to the dimensions it connects with.
+\| Fact Table     | Date | Product   | Store  | Customer  | Category  | Region |
+\|---------------|-------|-----------|--------|-----------|-----------|--------|
+\| FactSales     | ✅    | ✅       | ✅     | ✅        | ✅        | ✅    |
+\| FactBudget    | ✅    | ❌       | ❌     | ❌        | ✅        | ✅    |
+
+Conformed Dimensions
+    Same DateKey, CategoryKey, etc., across all fact tables to make joins predictable.
+Separate Schemas for Subject Areas
+    E.g., sales_mart, budget_mart to keep the model navigable.
+Naming Conventions
+    Prefix fact tables with Fact_ and dimension tables with Dim_.
+
+SQL Query Level Strategies (Performance & Readability)
+
+1.Use CTEs (Common Table Expressions) to break complex joins into smaller logical steps.
+WITH sales_summary AS (
+    SELECT DateKey, CategoryKey, SUM(SalesAmount) AS TotalSales
+    FROM FactSales
+    GROUP BY DateKey, CategoryKey
+),
+budget_summary AS (
+    SELECT MonthKey, CategoryKey, SUM(BudgetAmount) AS TotalBudget
+    FROM FactBudget
+    GROUP BY MonthKey, CategoryKey
+)
+SELECT s.DateKey, s.CategoryKey, s.TotalSales, b.TotalBudget
+FROM sales_summary s
+JOIN budget_summary b
+  ON s.CategoryKey = b.CategoryKey
+ AND LEFT(s.DateKey, 6) = b.MonthKey;
+
+Aggregate Early
+    Summarize fact tables before joining to reduce row explosion.
+
+Use Dimensional Filters First
+    Filter on dimension attributes (RegionName, CategoryName) before joining facts to limit scanned rows.
+
+Index/Partition on Join Keys
+    If in a warehouse, cluster/partition on DateKey, CategoryKey.
+
+✅ What’s useful in the long run:
+A clean, conformed dimensional model + aggregated query patterns
+This allows self-service BI tools (Power BI, Tableau, Looker) to join facts with minimal custom SQL.
