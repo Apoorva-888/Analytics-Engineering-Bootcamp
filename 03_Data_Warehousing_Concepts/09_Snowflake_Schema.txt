@@ -1,0 +1,29 @@
+Snowflake Schema Overview
+    Definition: A variation of the star schema where dimension tables are normalized into multiple related tables.
+    Key Point: Dimensions are split into sub-dimensions to reduce data redundancy.
+Trade-off:
+    ✅ Saves storage space (less duplication in dimension data).
+    ❌ Requires more joins → slightly slower queries compared to Star Schema.
+
+2. Difference from Star Schema
+Star Schema:
+    Each dimension is a single table.
+    Example: DimProduct has CategoryName directly inside it.
+Snowflake Schema:
+    DimProduct is split into DimProduct → DimCategory → DimDepartment tables.
+
+3. Snowflake Schema Diagram for Your Example
+   Snowflake Schema (After Normalization)
+             DimDate
+               |
+DimStore — FactSales — DimProduct — DimCategory — DimDepartment
+               |
+           DimCustomer — DimRegion
+Explanation of changes:
+DimProduct split into:
+      DimProduct (ProductID, ProductName, CategoryID)
+      DimCategory (CategoryID, CategoryName, DepartmentID)
+      DimDepartment (DepartmentID, DepartmentName)
+DimCustomer split into:
+      DimCustomer (CustomerID, Name, RegionID)
+      DimRegion (RegionID, RegionName)
