@@ -1,0 +1,45 @@
+1. Fact Table 📊
+What it stores:
+    Measurements, metrics, or facts about a business process.
+    Usually numeric, additive data (things you can sum, average, etc.).
+    Linked to dimension tables via foreign keys.
+Examples:
+    sales_amount, units_sold, revenue, click_count.
+In an Online Retail schema, the FactSales table might have:
+    date_key | product_key | store_key | sales_amount | units_sold
+Characteristics:
+    Large — contains many rows.
+    Granular — each row is one event or transaction.
+    Foreign Keys + Measures.
+
+2. Dimension Table 🗂️
+What it stores:
+    Descriptive attributes that give context to facts.
+    Mostly textual or categorical data.
+Examples:
+    Products: product_name, category, brand.
+    Time: date, month, quarter.
+    Location: city, state, country.
+Characteristics:
+    Smaller than fact tables.
+    Descriptive — helps slice and dice facts.
+    Primary key links to fact table’s foreign key.
+
+3. How They Work Together
+Example: A sales analysis query
+```sql
+SELECT 
+    d.date,
+    p.category,
+    SUM(f.sales_amount) AS total_sales
+FROM FactSales f
+JOIN DimDate d ON f.date_key = d.date_key
+JOIN DimProduct p ON f.product_key = p.product_key
+GROUP BY d.date, p.category;
+```
+
+Quick Analogy 🏪
+    Fact Table → The receipt (numbers, transactions).
+    Dimension Table → The catalog (descriptions, categories).
+
+
