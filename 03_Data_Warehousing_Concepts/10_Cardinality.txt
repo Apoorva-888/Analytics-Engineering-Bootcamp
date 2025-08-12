@@ -1,0 +1,96 @@
+What is Cardinality?
+In a database context:
+    Cardinality = The number of distinct values in a column (or set of columns).
+    It’s often used to describe data uniqueness and relationships between tables.
+
+2. Types of Cardinality
+(A) Column-level Cardinality
+    High Cardinality → Column has many unique values.
+    Low Cardinality → Column has few unique values.
+
+    | CustomerID | Name    | Country |
+    | ---------- | ------- | ------- |
+    | 1          | Alice   | USA     |
+    | 2          | Bob     | USA     |
+    | 3          | Charlie | India   |
+    | 4          | Diana   | USA     |
+    | 5          | Edward  | UK      |
+CustomerID → High cardinality (all unique: 5 distinct values).
+Country → Low cardinality (only 3 distinct values: USA, India, UK).
+
+
+(B) Relationship-level Cardinality
+When two tables are linked, cardinality defines how many records from one table can match with records in another table.
+Example:
+One-to-One (1:1)
+    One person has one passport.
+    Person ↔ Passport
+One-to-Many (1:N)
+    One customer can have many orders.
+    Customer → Orders
+Many-to-Many (M:N)
+    Students enroll in many courses, and each course has many students.
+    Students ↔ Courses via Enrollments table.
+
+3. Why Cardinality Matters?
+    Indexing decisions (high-cardinality columns are good index candidates).
+    Query optimization (database can estimate row matches).
+    Data modeling (avoiding duplication & ensuring correct relationships).
+
+
+1. One-to-One (1:1)
+Rule: Each row in Table A matches exactly one row in Table B.
+      Example: Person ↔ Passport
+      Person Table          Passport Table
+      +----+-------+        +----+------------+
+      | ID | Name  |        | ID | PassportNo |
+      +----+-------+        +----+------------+
+      | 1  | Alice |  ↔     | 1  | P123456    |
+      | 2  | Bob   |  ↔     | 2  | P654321    |
+      | 3  | Cara  |  ↔     | 3  | P998877    |
+      +----+-------+        +----+------------+
+📌 Diagram:
+[Person]──1:1──[Passport]
+
+2. One-to-Many (1:N)
+Rule: One row in Table A can match multiple rows in Table B,
+but each row in Table B matches only one row in Table A.
+      Example: Customer → Orders
+      Customer Table       Orders Table
+      +----+-------+       +----+------------+
+      | ID | Name  |       | ID | CustomerID |
+      +----+-------+       +----+------------+
+      | 1  | Alice |  →    | 101| 1          |
+      | 2  | Bob   |  →    | 102| 1          |
+      | 3  | Cara  |  →    | 103| 2          |
+      +----+-------+       | 104| 1          |
+                           | 105| 3          |
+                           +----+------------+
+📌 Diagram:
+[Customer]──1──→──∞──[Orders]
+
+
+3. Many-to-Many (M:N)
+Rule: Multiple rows in Table A can match multiple rows in Table B.
+Requires a junction table to store combinations.
+    Example: Students ↔ Courses via Enrollments
+    Students Table       Courses Table       Enrollments Table
+    +----+--------+      +----+-----------+  +-----------+----------+
+    | ID | Name   |      | ID | Course    |  | StudentID | CourseID |
+    +----+--------+      +----+-----------+  +-----------+----------+
+    | 1  | Alice  |      | 10 | Math      |  | 1         | 10       |
+    | 2  | Bob    |      | 20 | Physics   |  | 1         | 20       |
+    | 3  | Cara   |      | 30 | Chemistry |  | 2         | 10       |
+    +----+--------+      +----+-----------+  | 3         | 20       |
+                                             | 3         | 30       |
+                                             +-----------+----------+
+📌 Diagram:
+[Students]──∞──↔──∞──[Courses]
+       ↕
+ [Enrollments]
+
+                                      
+
+
+
+
