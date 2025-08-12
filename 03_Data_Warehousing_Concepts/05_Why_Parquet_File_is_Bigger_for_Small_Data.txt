@@ -1,0 +1,58 @@
+Why Parquet File is Bigger for Small Data
+  Your original CSV: 42 bytes
+  Parquet versions: ~2 KB even with compression.
+Reason → Parquet is not just raw data; it’s a self-describing binary format that stores:
+Columnar data blocks (even if tiny, each has a fixed structure).
+Metadata & schema:
+    Column names
+    Data types
+    Encoding info
+    Row group & page offsets
+Compression metadata (codec type, dictionary usage, etc.)
+Footer with column statistics (min, max, null counts).
+
+📌 For tiny files, the overhead of Parquet metadata is much larger than the actual data,
+so even “compressed” files can look inflated.
+2. Why Metadata Adds Size
+    In CSV: there’s no extra metadata — just raw text + delimiter.
+    In Parquet:
+        File begins with data pages (compressed or uncompressed).
+        Ends with footer (schema, offsets, stats).
+        Footer size is fixed overhead — so for small data, percentage-wise it’s huge.
+    Example:
+        Data: 42 bytes
+        Metadata: ~2 KB
+        Result: File size ≈ 2 KB (data barely matters).
+
+3. Slicing & Dicing Within a Compressed File
+Parquet’s magic trick:
+    Data is divided into row groups → each row group into column chunks → each chunk into pages.
+    Compression is applied per page, not on the whole file.
+    This means:
+        You can read only needed columns without decompressing the entire file.
+        You can read only relevant row groups if filter conditions (predicate pushdown) match.
+    In CSV or gzip’d CSV:
+        You must decompress the entire file to read even one column.
+
+4. Why Large Files Benefit
+For your 40 MB, 1 million row file:
+    Parquet can:
+    Store each column separately (better compression ratio).
+    Use dictionary encoding for repeated values.
+    Apply per-column compression (e.g., Snappy, GZIP).
+    Result:
+    40 MB CSV → 6 MB Parquet (compressed)
+    Overhead (metadata) is tiny compared to total data size.
+
+5. Size Behavior Summary
+
+| File Size            | CSV Size | Parquet (no compression) | Parquet + GZIP | Why                          |
+| -------------------- | -------- | ------------------------ | -------------- | ---------------------------- |
+| **Small** (42 bytes) | 42 B     | \~2 KB                   | \~2.6 KB       | Metadata overhead dominates  |
+| **Large** (40 MB)    | 40 MB    | \~10–15 MB               | \~6 MB         | Compression savings dominate |
+
+
+Key Takeaways
+    Small files: Parquet looks “inflated” because metadata > data.
+    Large files: Parquet shines because columnar compression drastically reduces size.
+    Slicing/Dicing: Parquet’s per-column, per-page compression allows selective reads — unlike CSV, where you must read everything.
