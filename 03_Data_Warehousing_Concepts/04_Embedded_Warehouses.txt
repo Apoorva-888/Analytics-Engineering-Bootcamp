@@ -1,0 +1,65 @@
+1. Embedded Warehouse – What It Means
+    An embedded warehouse is a lightweight, serverless database/analytics engine that runs inside your application process.
+
+Key characteristics:
+    No separate server to set up or maintain.
+    No dedicated RAM allocation or cluster — it uses the memory of the host process.
+    Everything is contained in a single setup (executable/library).
+    No network connections needed — it runs locally.
+
+Examples:
+    DuckDB → Optimized for OLAP (analytical queries, columnar storage).
+    SQLite → Optimized for OLTP (transactional queries, row storage).
+Advantages:
+    Simple installation (just a file or pip package).
+    Free to use.
+    Great for data analysis without a big server infrastructure.
+Disadvantages:
+    No distributed scaling — runs on a single machine.
+    Limited concurrency compared to cloud warehouses.
+
+2. DuckDB vs SQLite
+    | Feature                 | DuckDB                                                    | SQLite                               |
+    | ----------------------- | --------------------------------------------------------- | ------------------------------------ |
+    | **Type**                | OLAP (Analytics)                                          | OLTP (Transactions)                  |
+    | **Storage Format**      | Columnar                                                  | Row-oriented                         |
+    | **Ideal Use**           | Aggregations, joins, analytical queries on large datasets | Small-scale transactional apps       |
+    | **File Format Support** | Reads Parquet, CSV directly                               | Reads/writes SQLite DB file only     |
+    | **Fame Level**          | Newer, not as famous yet                                  | Very famous (used in browsers, apps) |
+    | **Server**              | Embedded                                                  | Embedded                             |
+Why DuckDB is gaining popularity: It’s like “SQLite for analytics” — no setup, but still supports high-speed columnar queries on large datasets (even GBs of Parquet files).
+
+3. Snowflake – Why Some Find It Overkill
+Pros:
+  Fully managed cloud warehouse.
+  Elastic scaling.
+  Rich ecosystem.
+Cons:
+  UI can feel bloated for code-first users.
+  Paid service — can be costly for frequent queries.
+  Requires network setup and cloud connectivity.
+  Trial: 30 days free trial available.
+Compared to embedded warehouses:
+  Snowflake requires account creation, billing setup, and cloud infra.
+  DuckDB/SQLite just run locally, instantly.
+
+4. Why Warehouses / Parquet Are Faster for Analytics
+    Warehouses (Snowflake, Redshift, BigQuery) and columnar formats (Parquet, ORC) are faster for analytics because:
+Columnar Storage:
+    Reads only needed columns → less I/O.
+Compression:
+    Similar values in a column compress better (e.g., dictionary encoding, run-length encoding).
+Vectorized Processing:
+    Process thousands of values in one CPU operation (SIMD).
+Predicate Pushdown:
+    Skip reading irrelevant rows based on filters.
+
+5. Warehouse vs Database (in Analytics Context)
+    | Feature          | Warehouse (OLAP)            | Database (OLTP)          |
+    | ---------------- | --------------------------- | ------------------------ |
+    | **Data Storage** | Columnar                    | Row-oriented             |
+    | **Best For**     | Analytics, aggregations     | Transactions, CRUD       |
+    | **Performance**  | Fast for scans & aggregates | Fast for inserts/updates |
+    | **Examples**     | Snowflake, Redshift, DuckDB | MySQL, Postgres, SQLite  |
+
+
