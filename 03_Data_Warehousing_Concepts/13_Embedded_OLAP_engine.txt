@@ -1,0 +1,39 @@
+What is “embedded OLAP engine”?
+OLAP = Online Analytical Processing → designed for analytical queries (aggregations, filtering, joins) on large datasets.
+Embedded = runs inside your application (here, your Python process in Google Colab) without needing a separate database server.
+DuckDB is like having a mini Snowflake / BigQuery engine right inside your notebook.
+
+💡 In our code, when you ran:
+con = duckdb.connect()
+result = con.execute(f"SELECT ... FROM parquet_scan('{parquet_path}')").fetchdf()
+That’s DuckDB acting as an OLAP engine — no server, no cluster, no cloud billing — just instant analytics.
+
+2️⃣ “Fast analytics in notebooks”
+DuckDB can directly read Parquet without loading all data into memory (memory-mapped files).
+It uses vectorized execution: processes data in batches instead of row-by-row like Pandas.
+It supports parallel processing: uses all available CPU cores by default.
+This is why your Parquet DuckDB benchmark ran faster than Parquet Pandas.
+📌 Example from your benchmark:
+Pandas Parquet → had to load DataFrame → then groupby.
+DuckDB Parquet → scanned only the required columns → aggregated directly → returned results.
+
+3️⃣ “Without requiring a big data cluster”
+Normally, for 1M+ rows:
+With Pandas: you risk hitting memory limits (especially in Google Colab).
+With Spark/Snowflake: you’d need a cluster or cloud warehouse (cost + setup time).
+With DuckDB:
+Runs in your laptop or Colab memory space.
+Still handles billions of rows efficiently as long as they fit on disk, thanks to streaming queries.
+No dependency on external infrastructure.
+
+4️⃣ Why this is perfect for your Medallion Architecture idea
+DuckDB can:
+Bronze: Ingest raw CSV files.
+Silver: Store cleaned/filtered data as Parquet.
+Gold: Run fast aggregations and export results.
+All in one notebook session, without Spark or SQL warehouses.
+
+5️⃣ Real-world analogy
+Think of DuckDB as:
+“SQLite for analytics”
+While SQLite is great for transactional apps (OLTP), DuckDB is optimized for analytical workloads (OLAP).
