@@ -1,0 +1,102 @@
+Definition:
+Medallion Architecture is a data design pattern (popularized by Databricks Lakehouse) where data flows through multiple progressively refined layers — typically Bronze → Silver → Gold.
+It ensures data quality, traceability, and optimized consumption.
+
+1. Bronze Layer — Raw / Ingestion Layer
+Purpose: Store raw data exactly as it comes from source systems.
+Characteristics:
+    Data state: Unprocessed, unvalidated.
+    Sources: OLTP DB dumps, IoT streams, logs, APIs, CSV/Parquet/JSON files, streaming feeds.
+    Schema: Loose or semi-structured; minimal or no transformations.
+    Storage: Data Lake / Lakehouse (S3, ADLS, GCS) in cost-efficient formats like Parquet, ORC, Avro, JSON.
+    Processing: Append-only (no updates unless re-ingesting full data).
+    Retention: Often long-term for reprocessing/replay.
+Goals:
+    Preserve original fidelity for audit/compliance.
+    Enable replay in case transformation logic changes.
+    Handle schema drift from sources.
+
+Example:
+| timestamp        | device\_id | temp | humidity | raw\_payload |
+| ---------------- | ---------- | ---- | -------- | ------------ |
+| 2025-08-13 10:00 | dev123     | 28.2 | 65%      | `{...}`      |
+
+2. Silver Layer — Cleansed & Conformed Layer
+Purpose: Make data analytics-ready by cleaning, conforming, and joining from multiple bronze sources.
+Characteristics:
+    Data state: Filtered, validated, enriched.
+    Common actions:
+        Remove duplicates.
+        Handle null/missing values.
+        Apply data type conversions.
+        Standardize units & formats.
+        Join related datasets (e.g., orders + customers).
+        Enforce business keys.
+    Schema: Enforced & consistent across domains.
+    Storage: Parquet/Delta with optimized partitioning & Z-ordering.
+    Processing: Upserts allowed (using Delta Lake or Merge statements).
+Goals:
+    Improve quality for downstream analytics.
+    Remove unusable or corrupted records.
+    Create a single source of truth for entities.
+Example:
+| order\_id | customer\_id | order\_date | total\_amount | country |
+| --------- | ------------ | ----------- | ------------- | ------- |
+| 1001      | C123         | 2025-08-10  | 250.00        | India   |
+
+3. Gold Layer — Business-Ready / Presentation Layer
+Purpose: Provide aggregated, business-friendly datasets for BI dashboards, ML models, or APIs.
+Characteristics:
+    Data state: Curated, aggregated, and ready for consumption.
+    Common actions:
+        Summarization (daily/monthly sales, KPIs).
+        Feature engineering for ML.
+        Star/Snowflake schema creation for BI tools.
+        Pre-computations to speed up queries.
+    Schema: Highly structured, business-friendly.
+    Storage: Same lake but optimized for fast reads (caching, indexes).
+    Consumption: Power BI, Tableau, Looker, ML pipelines, APIs.
+
+Goals:
+    Serve business needs with minimal transformation at query time.
+    Enable self-service analytics for non-technical users.
+    Keep performance high with pre-aggregated datasets.
+
+Example:
+| month   | region | total\_sales | avg\_order\_value | repeat\_customer\_rate |
+| ------- | ------ | ------------ | ----------------- | ---------------------- |
+| 2025-08 | APAC   | 5,200,000    | 280.50            | 32%                    |
+
+📊 Data Flow Overview
+          Raw Data Sources
+        ┌────────────────────┐
+        │  APIs, DB dumps,   │
+        │  IoT streams, etc. │
+        └─────────┬──────────┘
+                  │
+          ┌───────▼───────┐
+          │   BRONZE      │  <-- Ingested raw data
+          └───────┬───────┘
+                  │ (clean, dedupe, join)
+          ┌───────▼───────┐
+          │   SILVER      │  <-- Cleansed, conformed data
+          └───────┬───────┘
+                  │ (aggregate, KPI calc)
+          ┌───────▼───────┐
+          │   GOLD        │  <-- Business-ready datasets
+          └───────────────┘
+
+Benefits
+    Traceability: Easy to track where transformations happen.
+    Data Quality Management: Errors handled progressively.
+    Flexibility: Reprocess from earlier stages if logic changes.
+    Scalability: Works well with batch or streaming data.
+    Separation of Concerns: Each layer has a clear purpose.
+
+Best Practices
+    Use Delta Lake or similar for ACID transactions & schema enforcement.
+    Partition and Z-order large datasets for performance.
+    Maintain data contracts between layers to avoid breaking downstream jobs.
+    Automate ingestion & transformation pipelines (Airflow, Databricks Jobs).
+    Implement data quality checks (Great Expectations, Deequ).
+
