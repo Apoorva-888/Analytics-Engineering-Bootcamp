@@ -1,0 +1,45 @@
+Case 1: All Warehouses Suspended
+--------------------------------
+1. User runs: SELECT * FROM table;
+2. Snowflake Query Parser sends the request to Metadata Manager.
+3. Metadata Manager checks catalog:
+   - Table name
+   - Schema
+   - Columns
+   - Basic row count (if cached)
+4. Since no warehouse is running → No compute available.
+5. Query fails if it needs data scanning.
+   ✅ Works only for metadata queries (DESCRIBE, SHOW, SELECT COUNT(*) if cached).
+   ❌ SELECT * FROM table (full data scan) cannot run.
+
+Case 2: Warehouse Active
+------------------------
+1. User runs: SELECT * FROM table;
+2. Metadata Manager validates table schema & object details.
+3. Optimizer creates an execution plan using metadata statistics.
+4. Query is passed to the active Warehouse (compute cluster).
+5. Warehouse scans micro-partitions from storage layer.
+6. Data is returned to the user.
+✅ Full query execution succeeds.
+
+Role of Metadata Manager
+------------------------
+- Stores schema & object definitions.
+- Provides statistics to the Optimizer.
+- Answers metadata-only queries instantly without warehouses.
+- Acts as the "brain" of query planning and validation.
+
+
+Even if all warehouses in Snowflake are suspended, a query like SELECT * FROM table still works 
+ONLY when it does not require compute resources. 
+For example:
+- Metadata-only queries (checking schema, listing tables, getting column info, row counts from metadata cache) 
+can run without warehouses.
+- But queries that require actual data scanning/processing need at least one active virtual warehouse.
+
+The Metadata Manager helps by:
+- Storing and managing metadata about tables, schemas, views, and columns.
+- Keeping track of statistics, query history, and execution plans.
+- Allowing Snowflake to answer some queries instantly from metadata cache without spinning up a warehouse.
+- Optimizing performance by feeding metadata info into the Optimizer for better query execution.
+
