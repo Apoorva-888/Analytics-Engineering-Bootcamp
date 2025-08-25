@@ -1,0 +1,45 @@
+snowflake_caching_and_warehouse_suspend
+
+1. types_of_caching_in_snowflake
+   a. result_cache
+      - Stores query results for 24 hours.
+      - Lives in the metadata services layer (not tied to any warehouse).
+      - If the same query is executed again with same data state + same role + same warehouse size:
+        → Result returned instantly from cache (no warehouse usage, no cost).
+      - Works even if the warehouse is suspended.
+
+   b. metadata_cache
+      - Snowflake stores micro-partition metadata (min/max values, null counts, etc.).
+      - Used for partition pruning decisions.
+      - Lives in metadata manager, independent of warehouses.
+      - Always available, even if warehouse is suspended.
+
+   c. warehouse_local_cache (data cache)
+      - When a query runs, data is loaded from remote storage (S3/Blob/GCS) into the warehouse local SSD cache.
+      - If another query runs soon after and needs same data:
+        → Snowflake serves it from cache (faster, less remote I/O).
+      - BUT this cache is tied to an active warehouse instance.
+      - If the warehouse is suspended, this cache is cleared.
+      - When warehouse resumes → cache is empty → it reloads data from remote storage again.
+
+2. impact_of_suspend_on_caching
+   - result_cache → unaffected (works across suspends, since it’s service-layer based).
+   - metadata_cache → unaffected (always available).
+   - warehouse_local_cache → lost when suspended.
+
+3. example
+   Scenario: Orders table query
+   Query 1: SELECT SUM(order_amount) FROM orders WHERE order_date = '2023-01-01';
+   - First run → warehouse spins up, loads data from storage.
+   - Second run (immediate, same warehouse active):
+       → Uses warehouse_local_cache + result_cache → faster, cheaper.
+   - Warehouse suspended → local cache wiped.
+   - Query again after resume:
+       → Result_cache may serve if conditions same (instant, no cost).
+       → If result_cache expired or data changed → warehouse reloads data (no local cache benefit).
+
+4. summary
+   - result_cache: service-layer, survives warehouse suspend.
+   - metadata_cache: service-layer, survives warehouse suspend.
+   - warehouse_local_cache: tied to active warehouse, lost on suspend.
+   - Cost impact: More suspends → more warehouse cold-starts → more I/O from remote storage.
