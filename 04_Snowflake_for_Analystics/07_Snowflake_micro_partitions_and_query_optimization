@@ -1,0 +1,87 @@
+snowflake_micro_partitions_and_query_optimization
+
+1. micro_partitions
+   - Snowflake automatically divides large tables into small chunks called micro-partitions.
+   - Each micro-partition stores data in a compressed columnar format.
+   - Typical size: 50MB - 500MB (compressed).
+   - Metadata about each micro-partition (min/max values, counts, nulls, etc.) is stored in the Metadata Manager.
+   - Snowflake uses this metadata to skip unnecessary partitions during query execution (partition pruning).
+   - Example:
+       orders table → split into partitions like:
+         P1: order_date = '2023-01-01' to '2023-01-15'
+         P2: order_date = '2023-01-16' to '2023-01-31'
+         ...
+       Query with filter WHERE order_date = '2023-01-20'
+       → Only P2 scanned, P1 ignored → faster + cheaper.
+
+2. logical_vs_physical_structure
+   - Logical Structure:
+     • What user sees (tables, schemas, views).
+     • Example: SELECT * FROM orders;
+     • Orders table has rows/columns: order_id, order_date, amount.
+   - Physical Structure:
+     • Snowflake internally stores this as micro-partitions with metadata + compressed columnar data.
+     • Example: "amount" column stored separately in compressed column format.
+     • Queries only touch the required columns/partitions (column pruning + partition pruning).
+     • End user is abstracted from physical details.
+
+3. columnar_storage_and_pruning
+   - Snowflake uses columnar storage → each column stored separately.
+   - Advantage: When query asks for few columns, Snowflake only reads those columns.
+   - Pruning:
+     • Partition Pruning: Skip partitions using metadata (min/max).
+     • Column Pruning: Skip unnecessary columns.
+   - Example:
+     Query: SELECT order_id, amount FROM orders WHERE order_date = '2023-01-20'
+     → Snowflake only reads columns (order_id, amount) and only partitions covering that date.
+     → Skips order_date column after pruning check.
+
+4. clustering_and_cost_saving
+   - Clustering is organizing micro-partitions based on a column(s) for efficient pruning.
+   - Example: Cluster orders by order_date.
+     • Data stored in partitions by date ranges.
+     • Query with WHERE order_date BETWEEN '2023-01-01' AND '2023-01-07'
+       → Only partitions covering those dates scanned.
+     • Without clustering, partitions may have mixed/random dates → more partitions scanned → costlier.
+   - Efficient clustering reduces compute costs by minimizing scanned data.
+
+   Example table:
+   orders
+   ┌──────────┬────────────┬──────────────┐
+   │ order_id │ order_date │ order_amount │
+   ├──────────┼────────────┼──────────────┤
+   │ 1        │ 2023-01-01 │ 1000         │
+   │ 2        │ 2023-01-02 │ 2500         │
+   │ 3        │ 2023-01-15 │ 1500         │
+   │ 4        │ 2023-02-01 │ 3000         │
+   │ 5        │ 2023-02-05 │ 3500         │
+   └──────────┴────────────┴──────────────┘
+
+   Query: SELECT SUM(order_amount) FROM orders WHERE order_date BETWEEN '2023-01-01' AND '2023-01-15';
+
+   - If clustered → Only partitions P1, P2 (covering Jan 1–15) scanned.
+   - If not clustered → Many partitions scanned unnecessarily.
+
+5. good_vs_bad_queries
+   - Good Query:
+     • Uses filters that match partition keys.
+     • Selects only required columns.
+     • Example: SELECT SUM(order_amount) FROM orders WHERE order_date = '2023-01-01';
+       → Efficient pruning: only one partition + one column scanned.
+   - Bad Query:
+     • SELECT * FROM orders WHERE YEAR(order_date) = 2023;
+       • Applying function YEAR() on column prevents pruning.
+       • Snowflake scans all partitions → costly.
+
+6. why_store_data_efficiently
+   - Efficient storage reduces:
+     • Data scanned = less compute = lower cost.
+     • Faster query execution (less I/O).
+   - Columnar + compressed storage saves disk + improves performance.
+
+summary
+- Micro-partitions enable automatic partitioning + metadata-driven pruning.
+- Logical structure = what user queries; Physical structure = how Snowflake stores.
+- Columnar storage + partition pruning reduce scan cost.
+- Clustering improves pruning further, esp. for large tables.
+- Writing efficient queries is key to cost saving.
