@@ -1,0 +1,43 @@
+Snowflake runs inside a VPC (Virtual Private Cloud) and is divided into three key layers:
+
+1. Database Storage Layer
+Stores all structured and semi-structured data (JSON, Parquet, Avro, ORC, etc.).
+Data is automatically compressed, encrypted, and optimized by Snowflake.
+Key point: Users don’t manage file formats, partitions, or indexes — Snowflake does it automatically.
+Data is stored in immutable micro-partitions (16 MB each, columnar storage).
+
+📌 Your notes point:
+“Database Storage = Fully managed, compressed, encrypted, columnar storage in micro-partitions. Users only see logical tables, Snowflake manages physical storage.”
+
+2. Query Processing Layer (Compute Layer)
+This is where the Virtual Warehouses come in.
+A Virtual Warehouse = a cluster of compute resources (CPU, memory, SSD cache) that runs queries.
+You can spin up multiple warehouses for different workloads (ETL, BI dashboards, ML, etc.).
+They are independent → One team’s workload won’t affect another’s.
+Virtual warehouses can auto-scale up/down and pause/resume to save cost.
+📌 Your notes point:
+“Query processing is done by Virtual Warehouses, which are independent compute clusters that can scale elastically and run concurrently.”
+
+3. Cloud Services Layer
+This is the brain of Snowflake. It manages metadata, optimization, security, and overall orchestration.
+Components:
+Authentication & Access Control → SSO, OAuth, MFA, Role-based security.
+Infrastructure Manager → Manages provisioning, scaling, failover, and resource allocation.
+Optimizer → Uses cost-based optimization for query execution (chooses best path).
+Metadata Manager → Tracks all metadata (tables, schemas, micro-partitions, stats, etc.) to make queries fast.
+Security → Data encryption, data masking, governance, role hierarchy.
+📌 Your notes point:
+“Cloud Services = Metadata, optimization, access control, and orchestration layer. Acts like the central brain of Snowflake.”
+
+How the 3 layers interact
+A query comes in → Cloud Services authenticates and optimizes it.
+Query is executed → Sent to a Virtual Warehouse (compute).
+Virtual Warehouse fetches data → Reads from Database Storage.
+Results returned → Cloud Services manage metadata & logging.
+
+✅ Key Benefits from this architecture
+Separation of Storage & Compute → Scale each independently.
+Concurrency without contention → Multiple virtual warehouses run at same time.
+Fully managed → No indexing, tuning, vacuuming, etc.
+
+Secure & governed → End-to-end encryption, RBAC, and data sharing.
