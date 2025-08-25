@@ -1,0 +1,43 @@
+t_shirt_sizing_in_cloud_and_snowflake
+
+1. what_is_t_shirt_sizing
+   - A method of standardizing resource capacity using simple size labels like XS, S, M, L, XL.
+   - Instead of dealing directly with CPU cores, memory GB, or I/O units, cloud vendors map those into sizes.
+   - Helps users pick capacity without deep infra knowledge.
+   - Often used in cloud services (AWS, Azure, GCP) and in data platforms like Snowflake.
+
+2. t_shirt_sizing_in_cloud_services
+   - compute_services (AWS EC2, Azure VMs, GCP Compute Engine)
+     * Instance sizes (t2.small, m5.large, etc.) → map to vCPUs + RAM.
+     * Example: S = 2 vCPUs, 4 GB RAM; M = 4 vCPUs, 8 GB RAM.
+   - database_services (RDS, Cosmos DB, BigQuery slots)
+     * Provisioned in T-shirt sizes for performance tiers.
+   - container_and_serverless (AKS, ECS, Lambda)
+     * Sizes define memory/CPU bundles.
+   - benefit: abstracts complexity, makes capacity planning easier.
+
+3. t_shirt_sizing_in_snowflake
+   - snowflake_warehouses (compute clusters) are provisioned using T-shirt sizes.
+   - Sizes: X-Small (XS), Small (S), Medium (M), Large (L), up to 6XL (XXXL, etc.).
+   - each_size = fixed bundle of compute resources (virtual nodes).
+   - doubling rule:
+       * Each size up → doubles number of compute resources.
+       * Example:
+         XS → 1 cluster unit,
+         S → 2 units,
+         M → 4 units,
+         L → 8 units,
+         XL → 16 units.
+   - cost scaling:
+       * Billing is per second, per warehouse size.
+       * Larger size = higher cost per second but faster query execution (parallelism).
+   - use_case examples:
+       * XS → ad-hoc queries, dev/testing.
+       * M/L → medium data transformations, ETL.
+       * XL+ → heavy analytics, ML workloads.
+
+4. summary
+   - t_shirt_sizing = abstraction of compute capacity into simple labels.
+   - in_cloud: used across compute, databases, storage tiers.
+   - in_snowflake: defines virtual warehouse size; scaling is linear (each step doubles capacity).
+   - advantage: simple to choose, auto-scale up/down with predictable pricing.
