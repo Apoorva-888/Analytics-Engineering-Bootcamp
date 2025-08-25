@@ -1,0 +1,32 @@
+1. Source system extraction (tables)
+      Usually low computation on your side.
+      The load is mostly on the source system (e.g., transactional DB, API).
+      Your pipeline mainly does I/O (reading).
+      Unless the source data is huge, this step isn’t the heaviest.
+
+2. Create Dimensions and Facts
+      Moderate computation.
+      Dimension tables are smaller (customer, product, etc.) → lighter.
+      Fact tables (sales, clicks, logs, transactions) are large and often need joins across multiple sources.
+      Computation is higher here because:
+      Joins cause shuffles in distributed systems (e.g., Spark).
+      Data needs repartitioning and deduplication.
+
+3. Create Model (Star/Snowflake schema)
+      This is mostly DDL + indexing + table design.
+      Very little computation during creation.
+      Computation comes later when you query it.
+
+4. Add Business Logic
+      Highest computation cost.
+      Business rules = aggregations, window functions, case logic, transformations.
+
+Example:
+      KPI calculation (sales by region, customer churn, rolling averages).
+      Joining fact + multiple dims.
+      These transformations often run daily/weekly on large volumes.
+      This is where clusters scale up and cost spikes.
+
+✅ Answer:
+      The most computation-intensive step = Adding Business Logic
+      The second most = Fact table creation (ETL joins & loads)
