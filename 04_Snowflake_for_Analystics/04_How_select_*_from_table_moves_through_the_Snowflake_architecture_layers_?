@@ -1,0 +1,26 @@
+1. Query Submission (SELECT * FROM table;)
+   - The query request first enters the Cloud Services Layer.
+
+2. Cloud Services Layer
+   - Authenticates the user (roles, permissions checked).
+   - Metadata Manager looks up the table structure & location of micro-partitions.
+   - Optimizer generates the best execution plan.
+
+3. Query Processing Layer (Virtual Warehouse)
+   - The optimized query is sent to a Virtual Warehouse (compute cluster).
+   - The warehouse assigns compute resources (CPU, memory) to run the query.
+
+4. Database Storage Layer
+   - The Virtual Warehouse fetches the required data blocks (micro-partitions)
+     from the compressed, columnar storage.
+   - Only necessary columns/partitions are read (Snowflake does pruning).
+
+5. Query Processing Layer (again)
+   - Data is decompressed, filtered, aggregated, and joined as per the query.
+   - Final result set is prepared.
+
+6. Cloud Services Layer (final step)
+   - Metadata is updated (e.g., query logs, usage).
+   - Final result is sent back to the user.
+
+Output: Rows from the table returned to client/BI tool.
