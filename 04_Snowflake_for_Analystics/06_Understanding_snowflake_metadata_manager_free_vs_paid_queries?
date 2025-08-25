@@ -1,0 +1,16 @@
+Metadata Manager in Snowflake
+-----------------------------
+
+Is it free?
+✅ Yes. Querying metadata (like DESCRIBE, SHOW, INFORMATION_SCHEMA views) 
+   does not require a running warehouse. 
+   These queries are answered by Metadata Manager instantly.
+
+When does it cost us?
+💰 Costs are incurred only when:
+   1. You need to scan or process actual data (e.g., SELECT * FROM table).
+      → A warehouse must be running, and you pay compute credits.
+   2. Query needs uncached results (Metadata Manager doesn’t have them).
+      → Warehouse spins up to fetch from storage.
+   3. Storing metadata itself does not cost extra (it’s included in Snowflake service layer),
+      but underlying data storage always costs.
