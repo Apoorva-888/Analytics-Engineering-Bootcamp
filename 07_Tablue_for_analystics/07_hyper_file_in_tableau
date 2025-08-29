@@ -1,0 +1,27 @@
+hyper_file_in_tableau
+----------------------
+
+1) definition  
+- .hyper is tableau’s proprietary in-memory data engine file format.  
+- it stores compressed, optimized, and columnar structured data.  
+
+2) purpose  
+- makes queries and dashboards faster by keeping data in-memory.  
+- supports big data volumes with fast performance.  
+- improves extract creation and refresh times.  
+
+3) usage  
+- created when you make an "extract" in tableau desktop.  
+- extract = a snapshot of your data stored in .hyper format.  
+- used for offline analysis (no live connection needed).  
+- published to tableau server / tableau cloud for deployment.  
+
+4) advantages  
+- columnar storage → better aggregation speed.  
+- compression → reduces file size.  
+- parallel query execution → handles multiple users efficiently.  
+- incremental refresh supported → only new data is updated.  
+
+5) real-world example  
+- instead of connecting live to a 10M row SQL table each time,  
+  you create a .hyper extract. Tableau dashboards load instantly.  
