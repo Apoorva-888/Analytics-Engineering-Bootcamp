@@ -1,0 +1,85 @@
+BI TOOLS — PROS EXPLAINED (NOTEPAD NOTES)
+
+1) BIG DATA HANDLING
+- Columnar + in-memory engines speed up scans (e.g., Hyper, VertiPaq, associative engines).
+- Pushdown: heavy joins/aggregations pushed to the warehouse (BigQuery, Snowflake, Databricks).
+- Caching + extract mechanisms reduce repeated queries (scheduled extracts, query cache).
+- Aggregation tables / materialized views handle billion+ rows with summarized layers.
+- Query federation: combine multiple sources without full ETL.
+TIP:
+- Keep fact tables partitioned; add surrogate date/watermark columns.
+- Use star schemas; avoid many-to-many joins in the semantic layer.
+- Pre-aggregate for common slices (date, geo, product).
+WATCH OUT:
+- Overly wide extracts; missing partitions; ungoverned joins causing timeouts.
+
+2) CLOUD-CENTRALIZED REPOSITORY
+- Single source of truth: datasets, models, and dashboards in one governed hub.
+- Easy sharing + collaboration: workspaces, projects, folders, and controlled links.
+- Versioning + rollback via change history or Git integrations (where supported).
+- Autoscaling + managed infra: no server patching or manual capacity planning.
+- APIs/SDKs: automate refreshes, deployments, tagging, and quality checks.
+TIP:
+- Separate Dev/Test/Prod workspaces; enforce approvals before publishing to Prod.
+- Tag certified datasets and deprecate duplicates.
+WATCH OUT:
+- Sprawl of similar datasets; unclear owners; shadow copies in personal spaces.
+
+3) EASY DATA ACCESS & INCREMENTAL REFRESH
+- 100s of native connectors + JDBC/ODBC; SSO via IAM providers.
+- Incremental refresh: only new/changed partitions load (faster + cheaper).
+- Watermark columns (e.g., updated_at, ingestion_ts) drive partition logic.
+- Change data capture (CDC) + merge patterns keep models current.
+- Schedules + event-driven refreshes (on file arrival, job completion).
+TIP:
+- Define refresh windows (e.g., last 7 days incremental, older data static).
+- Validate late-arriving data; add retry + backfill routines.
+WATCH OUT:
+- Full refreshes on large tables; missing indexes; no CDC leading to stale insights.
+
+4) GOVERNANCE
+- Role-based access control (RBAC), row-level security (RLS), object-level security (OLS).
+- Data lineage: see upstream sources → datasets → reports for impact analysis.
+- Data classification/sensitivity labels; DLP policies; audit logs for compliance.
+- Endorsements/certifications to highlight trusted datasets.
+- Usage telemetry (who used what, when) for pruning and chargeback.
+TIP:
+- Minimum-privilege roles; periodic access reviews; ownership clearly assigned.
+- Create a data catalog glossary; document KPIs and grain.
+WATCH OUT:
+- Hard-coded filters instead of RLS; ad-hoc shares bypassing governance.
+
+5) PERSONALIZED ENGINES (PERSONALIZED ANALYTICS)
+- User attributes drive tailored views (region, role, customer segment).
+- Parameterized dashboards; saved views; alerts based on user thresholds.
+- Natural language query (NLQ) and AI-assisted insights for non-technical users.
+- Recommendation/ranking: surface “what matters to me” first.
+- Mobile/responsive layouts for role-specific consumption on the go.
+TIP:
+- Define personas (Executive, Analyst, Field Ops) and map widgets to tasks.
+- Use RLS + attributes to personalize at scale without duplicating reports.
+WATCH OUT:
+- Too many variants; personalization without governance = inconsistent metrics.
+
+QUICK FEATURE MAPPING (AT A GLANCE)
+- Power BI: Incremental Refresh, Aggregations, RLS/OLS, endorsements, Fabric/OneLake.
+- Tableau: Hyper extracts, Prep/Server/Cloud, Ask Data, Data Management add-on, RLS via user functions.
+- Qlik Sense: Associative engine, on-the-fly exploration, Section Access for security.
+- Looker (Looker Studio Pro is separate): LookML semantic layer, PDTs, user-attribute RLS.
+
+METRICS TO TRACK (OPERATIONS)
+- Query latency (p50/p95), refresh duration/failures, cache hit rate.
+- Dataset duplication rate, % certified usage, stale dashboard count.
+- Cost per query/refresh, active users by persona, SLA adherence.
+
+COMMON PITFALLS TO AVOID
+- Treating BI as ETL: push complex transforms to warehouse, not the viz layer.
+- No semantic model: inconsistent KPI calculations across reports.
+- Unbounded filters/joins: force limits, indexes, and partitions.
+- Skipping governance: unclear ownership and uncontrolled sharing.
+
+CHECKLIST (STARTER)
+- Define star schema + KPIs; add watermark columns.
+- Set up Dev/Test/Prod; enable endorsements + lineage.
+- Implement RLS; document personas; build one canonical dashboard per domain.
+- Turn on incremental refresh + schedule; monitor telemetry; iterate monthly.
