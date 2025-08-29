@@ -1,0 +1,72 @@
+tableau_skills
+--------------------------------------
+
+1) basic_charts  
+- bar chart → compare categories.  
+- line chart → trends over time.  
+- pie/donut chart → proportions.  
+- scatter plot → correlation.  
+- maps → geographic analysis (using geographic role).  
+- tree map → hierarchical data.  
+- heat map → density or intensity visualization.  
+
+2) advanced_charts  
+- dual axis chart → combine 2 measures on same axis.  
+- waterfall chart → running total effect.  
+- gantt chart → project timelines.  
+- box plot → distribution and outliers.  
+- bullet graph → compare performance vs target.  
+- funnel chart → stages of a process.  
+
+3) tableau_calculations  
+- calculated fields → custom formulas (ex: profit ratio = profit/sales).  
+- table calculations → running sum, percent of total, moving average.  
+- LOD (level of detail) expressions →  
+   * fixed → aggregation at fixed dimension.  
+   * include → adds more detail.  
+   * exclude → removes detail from aggregation.  
+
+4) data_connections  
+- connect to excel, csv, sql, oracle, cloud sources (snowflake, aws redshift, gcp bigquery).  
+- live connection vs extract (.hyper file).  
+- join types → inner, left, right, full.  
+- blending vs joining data.  
+- relationships in new data model.  
+
+5) dashboard_building  
+- design multiple worksheets.  
+- drag worksheets into dashboard.  
+- add filters, parameters, actions (highlight, filter, URL).  
+- responsive layouts for web/mobile.  
+- best practice: limit filters to avoid performance issues.  
+
+6) tableau_prep (etl_lightweight)  
+- clean, shape, and join datasets before loading into tableau.  
+- remove nulls, rename fields, pivot/unpivot.  
+- create flows and schedule refresh.  
+
+7) deployment  
+- publish workbooks/dashboards to tableau server / tableau cloud.  
+- schedule refreshes of extracts.  
+- manage permissions (role-based security).  
+- performance monitoring (dashboard load time, extract refresh).  
+
+8) performance_tuning  
+- use extracts over live when possible.  
+- reduce number of quick filters.  
+- hide unused fields.  
+- aggregate data before bringing to tableau.  
+- optimize joins/blends.  
+
+9) tableau_commands / shortcuts  
+- F7 → show/hide sidebar.  
+- CTRL + drag field → duplicate field.  
+- CTRL + Z → undo, CTRL + Y → redo.  
+- right-click → context menu (filters, sorts, create calc).  
+- drag fields to "columns/rows" → build views.  
+
+10) soft_skills_for_tableau_role  
+- storytelling with data → explain insights simply.  
+- requirement gathering → what does the business want to measure?  
+- documentation → data source details, calculation logic.  
+- collaboration → work with data engineers, analysts.  
