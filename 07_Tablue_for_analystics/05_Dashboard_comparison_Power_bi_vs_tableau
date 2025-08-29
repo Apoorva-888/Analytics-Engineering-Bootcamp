@@ -1,0 +1,39 @@
+DASHBOARD COMPARISON – POWER BI vs TABLEAU
+------------------------------------------
+
+POWER BI
+--------
+1) Where Dashboards Live  
+- Dashboards can ONLY be created and hosted in Power BI Service (Cloud).  
+- Power BI Desktop = build reports only, no dashboards.  
+
+2) Purpose  
+- KPI monitoring across datasets.  
+- One-page summaries, lightweight monitoring.  
+
+3) Sharing  
+- Needs Power BI Service (Pro/Premium license).  
+- Sharing limited if only using free desktop version.  
+
+------------------------------------------
+
+TABLEAU
+--------
+1) Where Dashboards Live  
+- Dashboards are created directly inside Tableau Desktop.  
+- Can be hosted on Tableau Server / Tableau Cloud for collaboration.  
+
+2) Purpose  
+- Rich data storytelling with multiple sheets, filters, interactivity.  
+- Used for both monitoring and deep exploration.  
+
+3) Sharing  
+- Publish dashboards to Tableau Server/Cloud and share securely.  
+- Supports role-based governance.  
+
+------------------------------------------
+
+KEY DIFFERENCE
+--------------
+- Power BI → Dashboards = Cloud-only, need Service to host.  
+- Tableau → Dashboards = Built in Desktop itself, can host via Server/Cloud.  
