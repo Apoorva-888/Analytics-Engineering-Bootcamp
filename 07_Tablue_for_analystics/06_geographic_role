@@ -1,0 +1,22 @@
+geographic_role
+----------------
+1) definition  
+- a metadata tag that tells the BI tool (tableau, power bi, qlik etc.) that a field represents a geographic location.  
+- examples: country, state, city, postal code, latitude/longitude.  
+
+2) purpose  
+- enables automatic mapping: tool recognizes the field as location-based.  
+- allows visualization on maps (heatmaps, filled maps, symbol maps).  
+- supports spatial analysis (distance, clustering, region-based aggregation).  
+
+3) usage beyond visualization  
+- geo role is not only for maps.  
+- used in data prep to standardize location fields.  
+- can be applied in filters (region-based filtering).  
+- enables drill-down hierarchy (country → state → city).  
+- useful in geospatial analytics (catchment areas, logistics, sales region analysis).  
+
+4) in visualization tools  
+- tableau: "assign geographic role" to fields for mapping.  
+- power bi: "data category = geography" for fields.  
+- qlik: similar geo tagging for location intelligence.  
