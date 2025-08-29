@@ -1,0 +1,89 @@
+project_lifecycle:
+- idea_or_problem_identification → find business problem/opportunity
+- requirements_gathering → understand what stakeholders want
+- design → create data model, wireframes, dashboard mockups
+- development → build pipelines, ETL, dashboards
+- testing → validate correctness, accuracy, usability
+- deployment → move solution to prod, users access dashboards
+- monitoring & maintenance → keep dashboards updated, fix bugs, improve
+
+information_vs_insight:
+- information = raw data, facts, numbers
+  example: "Zomato had 1,00,000 orders yesterday"
+- insight = action-oriented conclusion derived from information
+  example: "60% of cancelled orders were from city X due to delivery delays"
+- difference → info tells 'what happened', insight tells 'why it happened & what to do'
+
+problem_statement (example: zomato sales analysis):
+- find how sales are performing for Zomato
+- understand orders, cancellations, delivery success
+- identify patterns by location, delivery partners, time
+
+role_of_business_analyst/consultant:
+- define KPIs to track
+  - total_orders
+  - successful_orders
+  - cancelled_orders
+  - failed_orders
+  - revenue
+  - avg_delivery_time
+- define dimensions for analysis
+  - cities
+  - delivery_person
+  - time_of_delivery (hour/day/month)
+  - cuisine_type
+- BA ensures business requirements are clear
+
+role_of_data_analyst:
+- identify what information/columns are needed
+  - order_id
+  - customer_id
+  - city
+  - delivery_person_id
+  - order_status (success, failed, cancelled)
+  - delivery_time
+  - amount
+- check if data is available & accessible
+- verify data quality (is data_clean? consistent? duplicates? missing values?)
+- prepare questions for deeper analysis
+- build visuals → charts, dashboards
+- generate insights → story around business impact
+
+role_of_data_engineer / analytics_engineer:
+- create pipeline to make data consumable for DA
+- steps:
+  - ingest raw data from source (mysql, kafka, api, etc.)
+  - clean & transform → remove duplicates, handle nulls
+  - create schema → tables/views in data warehouse
+  - aggregate tables for quick reporting
+  - ensure DA can query easily
+- output: curated tables/views ready for analysis
+
+role_of_data_analyst (visualization):
+- design wireframe first → rough sketch of dashboard (on paper/figma)
+- then build dashboard in tool (Tableau/Power BI/Looker)
+- add charts:
+  - bar_chart (orders by city)
+  - line_chart (orders trend over time)
+  - pie_chart (successful vs cancelled orders)
+  - map_chart (orders by geography)
+- create story → "Orders are high in metro cities, but cancellations are highest during weekends in tier-2 cities due to fewer delivery persons"
+- provide actionable insights
+
+important_note:
+- tool (Tableau, Power BI, matplotlib, etc.) is secondary
+- what's important is process: 
+  - define_problem → gather_requirements → design_wireframe → build_pipeline → clean_data → dashboard → generate_insights
+
+workflow_summary:
+1. problem_statement defined by BA/Consultant
+2. BA defines KPIs & dimensions
+3. DA asks what data is needed → columns → checks quality
+4. DE/AE builds pipeline & consumable views
+5. DA builds visuals & dashboard
+6. insights are generated
+7. decision-making by management
+
+rule_of_thumb:
+- always create wireframe first before building dashboard
+- dashboard without planning = wasted effort
