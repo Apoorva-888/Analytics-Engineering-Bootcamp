@@ -1,0 +1,70 @@
+TABLEAU COMPONENTS — DEVELOPMENT, DEPLOYMENT, ETL
+-------------------------------------------------
+
+1) DEVELOPMENT
+--------------
+a) Tableau Desktop
+- Main authoring tool for creating dashboards, charts, and visualizations.
+- Connects to multiple data sources (files, DBs, cloud).
+- Supports advanced calculations, parameters, filters, and design.
+- Used by developers/analysts to build and publish reports.
+
+b) Tableau Public
+- Free version of Tableau Desktop with limited features.
+- Dashboards must be published to the public Tableau Gallery (no private save).
+- Good for learning, practice, or sharing open data projects.
+- Not suitable for sensitive / confidential company data.
+
+-------------------------------------------------
+
+2) DEPLOYMENT
+--------------
+a) Tableau Cloud (formerly Tableau Online)
+- Fully hosted SaaS version of Tableau Server managed by Salesforce.
+- No infrastructure setup required.
+- Scales automatically; subscription-based.
+- Best for companies who prefer cloud deployment.
+
+b) Tableau Server
+- On-premises or self-hosted deployment of Tableau.
+- Organization manages infrastructure, scaling, and security.
+- Provides full governance: role-based access, integration with AD/SSO.
+- Used by enterprises needing local control over data and compliance.
+
+-------------------------------------------------
+
+3) ETL / DATA PREPARATION
+--------------------------
+a) Tableau Prep
+- Data preparation tool bundled with Tableau Creator license.
+- Used to clean, transform, and shape raw data before visualization.
+- Features: joins, unions, pivot/unpivot, data type corrections, calculated fields.
+- Provides a visual flow diagram to trace transformations.
+- Output can be published as a cleaned dataset to Tableau Server/Cloud.
+
+-------------------------------------------------
+
+POWER BI LICENSE COSTS (PER USER PER MONTH, IN ₹)
+-------------------------------------------------
+- Power BI Free → ₹0 (limited, personal use only).
+- Power BI Pro → $10 ≈ ₹830
+   * For individuals/small teams.
+   * Share reports, collaborate, access shared dashboards.
+- Power BI Premium Per User (PPU) → $20 ≈ ₹1,660
+   * Advanced features (AI, large dataset storage, paginated reports).
+   * Useful for enterprises needing more power without full capacity.
+- Power BI Premium (Capacity-based) → starts $4,995 ≈ ₹4.15 Lakh per month
+   * Enterprise-level dedicated cloud compute.
+   * Unlimited distribution (no per-user Pro license required for viewers).
+
+-------------------------------------------------
+
+NOTES
+-----
+- Workflow in Tableau:
+   Tableau Prep → Tableau Desktop (develop dashboards) → Tableau Server/Cloud (deploy & share)
+- Tableau Public is mainly for individuals; not for enterprises.
+- Tableau Cloud vs Server depends on hosting preference:
+   * Cloud = Salesforce-managed, less IT overhead.
+   * Server = Company-managed, more control.
+- Power BI is generally cheaper than Tableau for small to mid-sized orgs.
